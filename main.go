@@ -1,0 +1,143 @@
+package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"html/template"
+	"io"
+	"log"
+	"net/http"
+	"sort"
+
+	"github.com/elastic/go-elasticsearch/v7"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+)
+
+type Handler struct {
+	ESClient *elasticsearch.Client
+}
+
+func main() {
+	h := new(Handler)
+	cfg := &elasticsearch.Config{
+		Addresses: []string{"http://localhost:9200"},
+	}
+	esclient, err := elasticsearch.NewClient(*cfg)
+	if err != nil {
+		log.Fatalf("esclient init: %v\n", err)
+		return
+	}
+	h.ESClient = esclient
+
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.RequestID)
+
+	r.Get("/", index)
+	r.Get("/result", h.result)
+
+	http.ListenAndServe(":3000", r)
+}
+
+func index(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("index.html.tmpl")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err = tmpl.Execute(w, nil); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+type SubjectRef struct {
+	CourseID string `json:"courseID"`
+	Title    string `json:"title"`
+}
+
+type Subject struct {
+	CourseID       string        `json:"courseID"`
+	Title          string        `json:"title"`
+	Credit         float32       `json:"credit"`
+	Grade          int           `json:"grade"`
+	Timetable      string        `json:"timeTable"`
+	Books          []string      `json:"books"`
+	ClassName      []string      `json:"className"`
+	PlanPretopics  string        `json:"planPretopics"`
+	Keywords       []string      `json:"keywords"`
+	SeeAlsoSubject []*SubjectRef `json:"seeAlsoSubject"`
+	Summary        string        `json:"summary"`
+}
+
+type Item struct {
+	Index  string  `json:"_index"`
+	Id     string  `json:"_id"`
+	Score  float32 `json:"_score"`
+	Source Subject `json:"_source"`
+}
+
+func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
+	query := r.PostForm.Get("q")
+	if len(query) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	res, err := h.ESClient.Search(
+		h.ESClient.Search.WithContext((r.Context())),
+		h.ESClient.Search.WithIndex("kdb2"),
+		h.ESClient.Search.WithBody(buildQuery(query)),
+		h.ESClient.Search.WithTrackTotalHits(true),
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	defer res.Body.Close()
+
+	var response []Item
+	if err := json.NewDecoder(res.Body).Decode(response); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	sort.SliceStable(response, func(i, j int) bool {
+		return response[j].Score < response[i].Score
+	})
+
+	tmpl, err := template.ParseFiles("result.html.tmpl")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if err = tmpl.Execute(w, response); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func buildQuery(q string) io.Reader {
+	query := map[string]interface{}{
+		"query": map[string]interface{}{
+			"query_string": map[string]interface{}{
+				"query":  q,
+				"fields": []string{"title", "summary", "className"},
+			},
+		},
+	}
+	payload, err := json.Marshal(query)
+	if err != nil {
+		return nil
+	}
+	buf := bytes.NewBuffer(payload)
+	return buf
+}

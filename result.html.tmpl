@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>kdb2 search</h1>
+    <form action="/result">
+        <input type="text" name="q" id="" />
+        <button type="submit">検索</button>
+    </form>
+    {{ range .}}
+    <section>
+        <h2>{{.CourseID}}: {{.Title}}</h2>
+        <p>{{.Summary}}</p>
+        <a href="https://kdb.tsukuba.ac.jp/syllabi/2023/{{.CourseID}}/jpn/">KdB</a>
+    </section>
+    {{ end }}
+</body>
+</html>
