@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"sort"
 
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/go-chi/chi/v5"
@@ -83,6 +82,14 @@ type Item struct {
 	Source Subject `json:"_source"`
 }
 
+type HitsPayload struct {
+	Hits []Item `json:"hits"`
+}
+
+type Response struct {
+	Hits HitsPayload `json:"hits"`
+}
+
 func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	if !r.URL.Query().Has("q") {
 		w.WriteHeader(http.StatusBadRequest)
@@ -103,15 +110,16 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	}
 	defer res.Body.Close()
 
-	var response []Item
-	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
+	response := new(Response)
+	if err := json.NewDecoder(res.Body).Decode(response); err != nil {
 		log.Fatalf("JSONDecoder err: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	sort.SliceStable(response, func(i, j int) bool {
-		return response[j].Score < response[i].Score
-	})
+	/*
+		sort.SliceStable(response.Hits, func(i, j int) bool {
+			return response.Hits[j].Score < response.Hits[i].Score
+		})*/
 
 	tmpl, err := template.ParseFiles("result.html.tmpl")
 	if err != nil {
