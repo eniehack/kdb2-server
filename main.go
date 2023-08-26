@@ -38,7 +38,7 @@ func main() {
 	r.Get("/", index)
 	r.Get("/result", h.result)
 
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":3030", r)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
