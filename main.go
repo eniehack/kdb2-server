@@ -97,6 +97,7 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		h.ESClient.Search.WithTrackTotalHits(true),
 	)
 	if err != nil {
+		log.Fatalf("ESClient err: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -104,6 +105,7 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 
 	var response []Item
 	if err := json.NewDecoder(res.Body).Decode(response); err != nil {
+		log.Fatalf("JSONDecoder err: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -113,10 +115,12 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles("result.html.tmpl")
 	if err != nil {
+		log.Fatalf("template parse err: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	if err = tmpl.Execute(w, response); err != nil {
+		log.Fatalf("template execute err: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -136,6 +140,7 @@ func buildQuery(q string) io.Reader {
 	}
 	payload, err := json.Marshal(query)
 	if err != nil {
+		log.Fatalf("query json marshal err: %v\n", err)
 		return nil
 	}
 	buf := bytes.NewBuffer(payload)
