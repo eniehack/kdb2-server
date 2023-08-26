@@ -117,9 +117,9 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	/*
-		sort.SliceStable(response.Hits, func(i, j int) bool {
-			return response.Hits[j].Score < response.Hits[i].Score
-		})*/
+	   sort.SliceStable(response.Hits, func(i, j int) bool {
+	           return response.Hits[j].Score < response.Hits[i].Score
+	   })*/
 
 	tmpl, err := template.ParseFiles("result.html.tmpl")
 	if err != nil {
@@ -127,7 +127,7 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if err = tmpl.Execute(w, response); err != nil {
+	if err = tmpl.Execute(w, response.Hits.Hits); err != nil {
 		log.Fatalf("template execute err: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
