@@ -205,13 +205,14 @@ func (h *Handler) simplesearch(w http.ResponseWriter, r *http.Request) {
 		payload = append(payload, item)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
 	if err := json.NewEncoder(w).Encode(payload); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 	return
 }
 
