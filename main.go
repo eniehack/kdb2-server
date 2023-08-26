@@ -84,11 +84,11 @@ type Item struct {
 }
 
 func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
-	query := r.PostForm.Get("q")
-	if len(query) == 0 {
+	if r.URL.Query().Has("q") {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	query := r.URL.Query().Get("q")
 
 	res, err := h.ESClient.Search(
 		h.ESClient.Search.WithContext((r.Context())),
