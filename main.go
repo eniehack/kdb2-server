@@ -104,7 +104,7 @@ func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
 	defer res.Body.Close()
 
 	var response []Item
-	if err := json.NewDecoder(res.Body).Decode(response); err != nil {
+	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
 		log.Fatalf("JSONDecoder err: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
