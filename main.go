@@ -84,7 +84,7 @@ type Item struct {
 }
 
 func (h *Handler) result(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Query().Has("q") {
+	if !r.URL.Query().Has("q") {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
