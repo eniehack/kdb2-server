@@ -26,6 +26,10 @@ type SyllabusPayload struct {
 
 func (h *Handler) SyllabusJSON(w http.ResponseWriter, r *http.Request) {
 	query := chi.URLParam(r, "courseID")
+	if len(query) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	res, err := h.ESClient.Search(
 		h.ESClient.Search.WithContext((r.Context())),
 		h.ESClient.Search.WithIndex("kdb2"),
@@ -46,6 +50,10 @@ func (h *Handler) SyllabusJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(response.Hits.Hits) == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	var payload SyllabusPayload
 	esItem := response.Hits.Hits[0]
 	payload = SyllabusPayload{
