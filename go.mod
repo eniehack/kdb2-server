@@ -1,4 +1,4 @@
-module github.com/eniehack/kdb2-server
+module github.com/until-tsukuba/kdb2-server
 
 go 1.21.0
 
