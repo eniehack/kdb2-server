@@ -1,0 +1,143 @@
+openapi: 3.0.0
+info:
+  title: KdB2 REST API
+  version: 0.1.0
+paths:
+  /api/v0/search:
+    get:
+      summary: Search university syllabus
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: true
+          description: Search query
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                - id: 01H8Q7V81VG79A93KNMYSYK1W6
+                  score: 10.843573
+                  courseID: GA14121
+                  title: 知識情報概論
+                  credit: 1
+                  grade: 1
+                  timeTable: 秋AB 月2
+                  books: null
+                  className:
+                    - 図書館情報学から知識情報学へ...
+                    - 記号と言語...
+                    - テキスト空間とドキュメント空間...
+                    - メディアとしてのドキュメント...
+                    - ドキュメント空間の組織化...
+                    - コミュニケーションと知識伝達...
+                    - 言語ゲームと発話行為...
+                    - 知識の成り立ち...
+                    - データからの知識抽出...
+                    - まとめ:知識情報学の世界
+                  planPretopics: ''
+                  keywords:
+                    - 知識
+                    - 情報
+                    - 記号
+                    - テキスト
+                    - ドキュメント
+                    - メディア
+                    - コミュニケーション
+                  seeAlsoSubject: null
+                  summary: 知識情報・図書館学類を理解するために...
+                - id: 01H8Q7VHRWQH6G31E99YV50WW6
+                  score: 10.809336
+                  courseID: GA14201
+                  title: 知識情報システム概説
+                  credit: 1
+                  grade: 1
+                  timeTable: 春BC 木4
+                  books: null
+                  className:
+                    - イントロダクション
+                    - Webコンテンツとしての構造化文書 (1)
+                    - Webコンテンツとしての構造化文書 (2)
+                    - Webの歴史とその構成要素 (1)
+                    - Webの歴史とその構成要素 (2)
+                    - AIを利用した日常で必要な情報へのアクセス (1)
+                    - AIを利用した日常で必要な情報へのアクセス (2)
+                    - 知識情報の同定と共有
+                    - 知識共有の枠組みとしてのLOD (1)
+                    - 知識共有の枠組みとしてのLOD (2)
+                  planPretopics: ''
+                  keywords:
+                    - WWW
+                    - URI
+                    - HTTP
+                    - HTML
+                    - XML
+                    - RDF
+                    - AI
+                    - 検索エンジン
+                    - 社会ネットワーク
+                    - Linked Data
+                  seeAlsoSubject: null
+                  summary: ネットワーク社会における知識の構造化、提供、共有のための枠組みについて講義する。
+        '400':
+          description: url parameter 'q' undefined.
+        '404':
+          description: ''
+        '500':
+          description: Internal Server Error
+  /api/v0/syllabus/{courseID}:
+    get:
+      summary: Get syllabus for a specific course
+      parameters:
+        - in: path
+          name: courseID
+          schema:
+            type: string
+          required: true
+          description: Course ID for the syllabus
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                id: 01H8Q7V81VG79A93KNMYSYK1W6
+                score: 10.843573
+                courseID: GA14121
+                title: 知識情報概論
+                credit: 1
+                grade: 1
+                timeTable: 秋AB 月2
+                books: null
+                className:
+                  - 図書館情報学から知識情報学へ...
+                  - 記号と言語...
+                  - テキスト空間とドキュメント空間...
+                  - メディアとしてのドキュメント...
+                  - ドキュメント空間の組織化...
+                  - コミュニケーションと知識伝達...
+                  - 言語ゲームと発話行為...
+                  - 知識の成り立ち...
+                  - データからの知識抽出...
+                  - まとめ:知識情報学の世界
+                planPretopics: ''
+                keywords:
+                  - 知識
+                  - 情報
+                  - 記号
+                  - テキスト
+                  - ドキュメント
+                  - メディア
+                  - コミュニケーション
+                seeAlsoSubject: null
+                summary: 知識情報・図書館学類を理解するために...
+        '400':
+          description: parameter courseID undefined
+        '404':
+          description: this courseID's subject is not found
+servers:
+  - url: https://kdb2.tsukuba.one/
+    variables: {}

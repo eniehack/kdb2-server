@@ -29,6 +29,7 @@ func main() {
 
 	r.Get("/", handler.Index)
 	r.Get("/result", h.Result)
+	r.Get("/api/v0/openapi", handler.OpenAPI)
 	r.Get("/api/v0/syllabus/{courseID}.json", h.SyllabusJSON)
 	r.Get("/api/v0/search", h.SimpleSearch)
 
