@@ -4,16 +4,23 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/BurntSushi/toml"
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/until-tsukuba/kdb2-server/internal/config"
 	"github.com/until-tsukuba/kdb2-server/internal/handler"
 )
 
 func main() {
+	config := new(config.Config)
+	if _, err := toml.DecodeFile("./config.toml", config); err != nil {
+		log.Fatalf("config load: %v\n", err)
+		return
+	}
 	h := new(handler.Handler)
 	cfg := &elasticsearch.Config{
-		Addresses: []string{"http://localhost:9200"},
+		Addresses: []string{config.ElasticSearchConfig.Host},
 	}
 	esclient, err := elasticsearch.NewClient(*cfg)
 	if err != nil {
