@@ -3,21 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>検索結果 - kdb2</title>
+    <style>
+    #copyright {
+        font-size: small;
+    }
+    </style>
 </head>
 <body>
-    <h1>kdb2 search</h1>
-    <form action="/result">
-        <input type="text" name="q" id="" />
-        <button type="submit">検索</button>
-    </form>
-    {{ range .}}
-    <section>
-        <h2>{{.Source.CourseID}}: {{.Source.Title}}</h2>
-        <small>{{.Score}}</small>
-        <p>{{.Source.Summary}}</p>
-        <a href="https://kdb.tsukuba.ac.jp/syllabi/2023/{{.Source.CourseID}}/jpn/">KdB</a>
-    </section>
-    {{ end }}
+    <main>
+        <h1>kdb2 search</h1>
+        <form action="/result">
+            <input type="text" name="q" id="" />
+            <button type="submit">検索</button>
+        </form>
+        {{ range .}}
+        <section>
+            <h2>{{.Source.CourseID}}: {{.Source.Title}}</h2>
+            <p>{{.Source.Summary}}</p>
+            <a href="https://kdb.tsukuba.ac.jp/syllabi/2023/{{.Source.CourseID}}/jpn/">KdB</a>
+        </section>
+        {{ end }}
+    </main>
+    <footer>
+        <p>このサービス、ソフトウェアは筑波大学が提供、開発、関与するサービスではありません。</p>
+        <p id="copyright">このソフトウェアはMIT Licenseで<a href="https://github.com/until-tsukuba/kdb2-server/blob/trunk/LICENSE">ライセンス</a>されており、かつ誰でも開発に参加できます。ソースコードは<a href="https://github.com/until-tsukuba/kdb2-server">GitHub</a>から入手できます。</p>
+    </footer>
 </body>
 </html>
