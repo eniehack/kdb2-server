@@ -133,7 +133,6 @@
               "application/json": {
                 "example": {
                   "id": "01H8Q7V81VG79A93KNMYSYK1W6",
-                  "score": 10.843573,
                   "courseID": "GA14121",
                   "title": "知識情報概論",
                   "credit": 1,
