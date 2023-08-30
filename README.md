@@ -21,3 +21,4 @@ REST APIに関しては[ここ](https://kdb2.tsukuba.one/api/v0/openapi)にJSON�
 1. `git clone` & `cd`
 2. kdb2-crawlerを動かし、KdBをクロールし、Elasticsearchにデータを投入する
 3. `go build`
+4. `cp config.example.toml config.toml`
