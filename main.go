@@ -8,6 +8,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/until-tsukuba/kdb2-server/internal/config"
 	"github.com/until-tsukuba/kdb2-server/internal/handler"
 )
@@ -31,8 +32,13 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
+	r.Use(cors.Handler(cors.Options{
+		AllowedHeaders:   []string{"Accept", "Content-Type"},
+		AllowCredentials: false,
+	}))
 
 	r.Get("/", handler.Index)
 	r.Get("/result", h.Result)
