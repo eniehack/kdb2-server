@@ -70,7 +70,7 @@ func (h *Handler) SimpleSearch(w http.ResponseWriter, r *http.Request) {
 		h.ESClient.Search.WithTrackTotalHits(true),
 	)
 	if err != nil {
-		log.Fatalf("ESClient err: %v\n", err)
+		log.Printf("ESClient err: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -78,7 +78,7 @@ func (h *Handler) SimpleSearch(w http.ResponseWriter, r *http.Request) {
 
 	response := new(ElasticSearchResponse)
 	if err := json.NewDecoder(res.Body).Decode(response); err != nil {
-		log.Fatalf("JSONDecoder err: %v\n", err)
+		log.Printf("JSONDecoder err: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
