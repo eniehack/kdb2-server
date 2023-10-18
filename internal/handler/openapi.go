@@ -6,6 +6,18 @@ import (
 	"os"
 )
 
+func SwaggerUI(w http.ResponseWriter, r *http.Request) {
+	file, err := os.Open("swagger.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html")
+	io.Copy(w, file)
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
 func OpenAPI(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Accept")
 	if contentType == "application/yaml" {
