@@ -18,70 +18,8 @@ paths:
           description: Successful response
           content:
             application/json:
-              example:
-                - id: 01H8Q7V81VG79A93KNMYSYK1W6
-                  score: 10.843573
-                  courseID: GA14121
-                  title: 知識情報概論
-                  credit: 1
-                  grade: 1
-                  timeTable: 秋AB 月2
-                  books: null
-                  className:
-                    - 図書館情報学から知識情報学へ...
-                    - 記号と言語...
-                    - テキスト空間とドキュメント空間...
-                    - メディアとしてのドキュメント...
-                    - ドキュメント空間の組織化...
-                    - コミュニケーションと知識伝達...
-                    - 言語ゲームと発話行為...
-                    - 知識の成り立ち...
-                    - データからの知識抽出...
-                    - まとめ:知識情報学の世界
-                  planPretopics: ''
-                  keywords:
-                    - 知識
-                    - 情報
-                    - 記号
-                    - テキスト
-                    - ドキュメント
-                    - メディア
-                    - コミュニケーション
-                  seeAlsoSubject: null
-                  summary: 知識情報・図書館学類を理解するために...
-                - id: 01H8Q7VHRWQH6G31E99YV50WW6
-                  score: 10.809336
-                  courseID: GA14201
-                  title: 知識情報システム概説
-                  credit: 1
-                  grade: 1
-                  timeTable: 春BC 木4
-                  books: null
-                  className:
-                    - イントロダクション
-                    - Webコンテンツとしての構造化文書 (1)
-                    - Webコンテンツとしての構造化文書 (2)
-                    - Webの歴史とその構成要素 (1)
-                    - Webの歴史とその構成要素 (2)
-                    - AIを利用した日常で必要な情報へのアクセス (1)
-                    - AIを利用した日常で必要な情報へのアクセス (2)
-                    - 知識情報の同定と共有
-                    - 知識共有の枠組みとしてのLOD (1)
-                    - 知識共有の枠組みとしてのLOD (2)
-                  planPretopics: ''
-                  keywords:
-                    - WWW
-                    - URI
-                    - HTTP
-                    - HTML
-                    - XML
-                    - RDF
-                    - AI
-                    - 検索エンジン
-                    - 社会ネットワーク
-                    - Linked Data
-                  seeAlsoSubject: null
-                  summary: ネットワーク社会における知識の構造化、提供、共有のための枠組みについて講義する。
+              schema:
+                $ref: '#/components/schemas/SearchResult'
         '400':
           description: url parameter 'q' undefined.
         '404':
@@ -103,36 +41,8 @@ paths:
           description: Successful response
           content:
             application/json:
-              example:
-                id: 01H8Q7V81VG79A93KNMYSYK1W6
-                courseID: GA14121
-                title: 知識情報概論
-                credit: 1
-                grade: 1
-                timeTable: 秋AB 月2
-                books: null
-                className:
-                  - 図書館情報学から知識情報学へ...
-                  - 記号と言語...
-                  - テキスト空間とドキュメント空間...
-                  - メディアとしてのドキュメント...
-                  - ドキュメント空間の組織化...
-                  - コミュニケーションと知識伝達...
-                  - 言語ゲームと発話行為...
-                  - 知識の成り立ち...
-                  - データからの知識抽出...
-                  - まとめ:知識情報学の世界
-                planPretopics: ''
-                keywords:
-                  - 知識
-                  - 情報
-                  - 記号
-                  - テキスト
-                  - ドキュメント
-                  - メディア
-                  - コミュニケーション
-                seeAlsoSubject: null
-                summary: 知識情報・図書館学類を理解するために...
+              schema:
+                $ref: '#/components/schemas/Subject'
         '400':
           description: parameter courseID undefined
         '404':
@@ -140,3 +50,119 @@ paths:
 servers:
   - url: https://kdb2.tsukuba.one/
     variables: {}
+    
+components:
+  schemas:
+    SubjectRef:
+      required:
+        - courseID
+        - title
+      type: object
+      properties:
+        courseID:
+          type: string
+          example: GA18132
+        title:
+          type: string
+          example: プログラミング入門
+    Subject:
+      type: object
+      required:
+        - id
+        - courseID
+        - title
+        - credit
+        - grade
+        - timeTable
+        - books
+        - className
+        - planPretopics
+        - keywords
+        - seeAlsoSubject
+        - summary
+      properties:
+        id:
+          type: string
+          example: "01H8PTK19XT78CRYFN9V2MHTX3"
+          description: "KdB2側が登録される項目1つに振るユニークな文字列"
+        courseID:
+          type: string
+          example: "EE21241"
+          description: "科目に振られるユニークな文字列"
+        title:
+          type: string
+          example: "地誌学"
+          description: "科目名"
+        credit:
+          type: number
+          example: 1
+          description: "この科目を受講することで修得できる単位数"
+        grade:
+          type: number
+          example: 2
+          description: "最低履修年次"
+        timeTable:
+          type: string
+          example: "春AB 木1"
+          description: "開講される学期、モジュール、曜日、時間帯"
+        books:
+          type: array
+          nullable: true
+          items: 
+            type: string
+          example: 
+            - "1. 中村和郎ほか 「地域と景観」古今書院"
+            - "2. 山下亜紀郎 「水環境問題の地域的諸相」古今書院"
+          description: "参考書籍"
+        className:
+          type: array
+          nullable: true
+          items:
+            type: string
+          example: 
+            - "イントロダクション(授業概要と研究紹介)"
+            - "地誌学とは何か(地誌学と系統地理学)"
+            - "地域とは何か(地域概念の整理)"
+            - "地域的観点と地域モデルの原型"
+            - "都市の地域モデル1:市街地モデル"
+            - "都市の地域モデル2:都市圏モデル,都市群モデル"
+            - "農村の地域モデル"
+            - "地域モデルの作成方法"
+            - "都市の水環境問題の研究事例1:日本の事例"
+            - "都市の水環境問題の研究事例1:海外の事例"
+          description: "講義各回のテーマ、タイトル"
+        planPretopics:
+          type: string
+          example: '対面で実施する。詳細はmanabaで案内する。'
+        keywords:
+          type: array
+          nullable: true
+          items:
+            type: string
+          example:
+            - "地域"
+            - "地域構造"
+            - "地域モデル"
+            - "都市"
+            - "水環境問題"
+        seeAlsoSubject:
+          type: array
+          items: 
+            $ref: '#/components/schemas/SubjectRef'
+          nullable: true
+          description: "関連科目"
+        summary:
+          type: string
+          example: "まず、地誌学的研究の基礎である各種の地域概念や地域モデルについて説明し、次に、具体的な研究事例として、おもに日本も含めたアジアの都市発展と環境問題について紹介する。"
+          description: "概要"
+    SearchResult:
+      type: array
+      items:
+        allOf: 
+          - $ref: "#/components/schemas/Subject"
+          - type: object
+            required:
+              - score
+            properties:
+              score:
+                type: number
